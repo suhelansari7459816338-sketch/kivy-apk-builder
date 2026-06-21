@@ -1,3 +1,4 @@
+
 name: Build Android APK
 
 on:
@@ -31,6 +32,14 @@ jobs:
       run: |
         pip install --upgrade pip setuptools wheel
         pip install cython kivy g4f nest_asyncio aiohttp buildozer
+
+    - name: Auto Generate and Fix Buildozer Spec
+      run: |
+        rm -f buildozer.spec
+        buildozer init
+        sed -i 's/requirements = python3,kivy/requirements = python3,kivy,g4f,nest_asyncio,aiohttp/g' buildozer.spec
+        sed -i 's/#android.permissions = INTERNET/android.permissions = INTERNET/g' buildozer.spec
+        sed -i 's/android.api = 33/android.api = 31/g' buildozer.spec
 
     - name: Build APK with Buildozer
       run: |
